@@ -14,9 +14,10 @@ namespace Testing
 
         private readonly HexColor[] ColorTable;
 
-        public ImageCLI()
+        public ImageCLI(Image<Rgba32> image)
         {
             ColorTable = InputColors.Select(x => new HexColor(x)).ToArray();
+            ConsoleWriteImage(image);
         }
 
         private void ConsoleWritePixel(HexColor cValue)
@@ -53,12 +54,12 @@ namespace Testing
             Console.Write(rList[bestHit[2] - 1]);
         }
 
-        public void ConsoleWriteImage(Image<Rgba32> image)
+        private void ConsoleWriteImage(Image<Rgba32> image)
         {
             int sMax = 50;
             decimal percent = Math.Min(decimal.Divide(sMax, image.Width), decimal.Divide(sMax, image.Height));
             Size dSize = new Size((int)(image.Width * percent), (int)(image.Height * percent));
-            image.Mutate(x => x.Resize(dSize.Width * 2, dSize.Height));
+            image.Mutate(x => x.Resize(dSize.Width, dSize.Height));
 
             image.ProcessPixelRows(accessor =>
             {
@@ -75,6 +76,7 @@ namespace Testing
                     {
                         // Get a reference to the pixel at position x
                         ref Rgba32 pixel = ref pixelRow[x];
+                        ConsoleWritePixel(new HexColor(pixel));
                         ConsoleWritePixel(new HexColor(pixel));
                     }
                     Console.WriteLine();
