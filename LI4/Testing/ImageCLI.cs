@@ -55,7 +55,7 @@ namespace Testing
 
         public void ConsoleWriteImage(Image<Rgba32> image)
         {
-            int sMax = 29;
+            int sMax = 50;
             decimal percent = Math.Min(decimal.Divide(sMax, image.Width), decimal.Divide(sMax, image.Height));
             Size dSize = new Size((int)(image.Width * percent), (int)(image.Height * percent));
             image.Mutate(x => x.Resize(dSize.Width * 2, dSize.Height));
