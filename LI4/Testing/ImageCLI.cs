@@ -14,6 +14,12 @@ namespace Testing
 
         private readonly HexColor[] ColorTable;
 
+        public ImageCLI(string compressedString)
+        {
+            ColorTable = InputColors.Select(x => new HexColor(x)).ToArray();
+            ConsoleWriteImage(ImageString.GetImage(compressedString));
+        }
+
         public ImageCLI(Image<Rgba32> image)
         {
             ColorTable = InputColors.Select(x => new HexColor(x)).ToArray();

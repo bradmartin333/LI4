@@ -10,7 +10,7 @@ namespace Testing
         public static string SendImage(Image<Rgba32> image)
         {
             // Clamp max image dimension
-            byte m = 50;
+            byte m = 50; // Cannot exceed 255
             if (image.Width > m || image.Height > m)
             {
                 int r = image.Width / image.Height;
