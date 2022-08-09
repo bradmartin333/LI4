@@ -14,10 +14,12 @@
         <skia:SKElement Name ="SKraw"
                         PaintSurface="OnPaintRawSurface"
                         IgnorePixelScaling="True"
-                        Grid.Column="0"/>
+                        Grid.Column="0"
+                        Margin="10,10,5,10"/>
         <skia:SKElement Name ="SKprocessed"
                         PaintSurface="OnPaintProcessedSurface" 
                         IgnorePixelScaling="True"
-                        Grid.Column="1"/>
+                        Grid.Column="1"
+                        Margin="5,10,10,10"/>
     </Grid>
 </Window>

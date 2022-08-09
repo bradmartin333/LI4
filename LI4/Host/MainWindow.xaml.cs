@@ -11,6 +11,9 @@ namespace Host
     /// </summary>
     public partial class MainWindow : Window
     {
+        private SKBitmap Bitmap;
+        private bool Rendering = true;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -27,35 +30,28 @@ namespace Host
 
         private void OnPaintRawSurface(object sender, SKPaintSurfaceEventArgs e)
         {
-            // draw image with disposables
+            Rendering = true;
             using SKCanvas canvas = e.Surface.Canvas;
             canvas.Clear(SKColors.White);
             using SKImage image = SKImage.FromEncodedData(GetRandomDevImage());
-            using SKBitmap bm = SKBitmap.FromImage(image);
-            using SKBitmap bms = new SKBitmap((int)SKraw.ActualWidth, (int)SKraw.ActualHeight);
-            bm.ScalePixels(bms, SKFilterQuality.High);
-            canvas.DrawBitmap(bms, new SKPoint(0, 0));
+            Bitmap = SKBitmap.FromImage(image);
+            canvas.DrawBitmap(Bitmap, e.Info.Rect);
+            Rendering = false;
+            SKprocessed.InvalidateVisual();
         }
 
         private void OnPaintProcessedSurface(object sender, SKPaintSurfaceEventArgs e)
         {
-            // the the canvas and properties
-            var canvas = e.Surface.Canvas;
-
-            // make sure the canvas is blank
+            if (Rendering) return;
+            using SKCanvas canvas = e.Surface.Canvas;
             canvas.Clear(SKColors.White);
-
-            // draw some text
-            var paint = new SKPaint
+            unsafe
             {
-                Color = SKColors.Black,
-                IsAntialias = true,
-                Style = SKPaintStyle.Fill,
-                TextAlign = SKTextAlign.Center,
-                TextSize = 24
-            };
-            var coord = new SKPoint(e.Info.Width / 2, (e.Info.Height + paint.TextSize) / 2);
-            canvas.DrawText("SkiaSharp", coord, paint);
+                uint* ptr = (uint*)Bitmap.GetPixels().ToPointer();
+                for (int i = 0; i < Bitmap.Width * Bitmap.Height; i++)
+                    *ptr++ &= 0xE0E0E0FF;
+            }
+            canvas.DrawBitmap(Bitmap, e.Info.Rect);
         }
     }
 }
