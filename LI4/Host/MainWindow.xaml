@@ -6,20 +6,21 @@
         xmlns:skia="clr-namespace:SkiaSharp.Views.WPF;assembly=SkiaSharp.Views.WPF"
         mc:Ignorable="d"
         Title="LI4 Host" Height="450" Width="800">
-    <Grid>
+    <Grid Name="Grid">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <skia:SKElement Name ="SKraw"
-                        PaintSurface="OnPaintRawSurface"
+                        PaintSurface="SKraw_OnPaint"
                         IgnorePixelScaling="True"
                         Grid.Column="0"
                         Margin="10,10,5,10"/>
         <skia:SKElement Name ="SKprocessed"
-                        PaintSurface="OnPaintProcessedSurface" 
+                        PaintSurface="SKprocessed_OnPaint" 
                         IgnorePixelScaling="True"
                         Grid.Column="1"
-                        Margin="5,10,10,10"/>
+                        Margin="5,10,10,10"
+                        MouseMove="SKprocessed_MouseMove"/>
     </Grid>
 </Window>

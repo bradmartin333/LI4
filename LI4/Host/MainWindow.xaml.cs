@@ -2,7 +2,9 @@
 using SkiaSharp.Views.Desktop;
 using System;
 using System.IO;
+using System.Linq;
 using System.Windows;
+using System.Windows.Media;
 
 namespace Host
 {
@@ -21,14 +23,14 @@ namespace Host
 
         private string GetRandomDevImage()
         {
-            DirectoryInfo directoryInfo = new DirectoryInfo($@"{Environment.GetFolderPath(Environment.SpecialFolder.MyPictures)}\Dev2\");
-            FileInfo[] files = directoryInfo.GetFiles();
+            DirectoryInfo directoryInfo = new DirectoryInfo($@"{Environment.GetFolderPath(Environment.SpecialFolder.MyPictures)}/Dev2/");
+            FileInfo[] files = directoryInfo.GetFiles().Where(x => new string[] { ".png", ".jpg" }.Contains(x.Extension)).ToArray();
             Random random = new Random();
             FileInfo file = files[random.Next(files.Length)];
             return file.FullName;
         }
 
-        private void OnPaintRawSurface(object sender, SKPaintSurfaceEventArgs e)
+        private void SKraw_OnPaint(object sender, SKPaintSurfaceEventArgs e)
         {
             Rendering = true;
             using SKCanvas canvas = e.Surface.Canvas;
@@ -40,7 +42,7 @@ namespace Host
             SKprocessed.InvalidateVisual();
         }
 
-        private void OnPaintProcessedSurface(object sender, SKPaintSurfaceEventArgs e)
+        private void SKprocessed_OnPaint(object sender, SKPaintSurfaceEventArgs e)
         {
             if (Rendering) return;
             using SKCanvas canvas = e.Surface.Canvas;
@@ -52,6 +54,15 @@ namespace Host
                     *ptr++ &= 0xE0E0E0FF;
             }
             canvas.DrawBitmap(Bitmap, e.Info.Rect);
+        }
+
+        private void SKprocessed_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            Point controlSpacePosition = e.GetPosition(SKprocessed);
+            int x = (int)Math.Floor(controlSpacePosition.X * Bitmap.Width / SKprocessed.ActualWidth);
+            int y = (int)Math.Floor(controlSpacePosition.Y * Bitmap.Height / SKprocessed.ActualHeight);
+            SKColor c = Bitmap.GetPixel(x, y);
+            Grid.Background = new SolidColorBrush(Color.FromArgb(c.Alpha, c.Red, c.Green, c.Blue));
         }
     }
 }
