@@ -13,6 +13,7 @@ namespace Host
     /// </summary>
     public partial class MainWindow : Window
     {
+        private const double Scaling = 0.2; ///
         private SKBitmap Bitmap;
         private bool Rendering = true;
 
@@ -50,8 +51,7 @@ namespace Host
             unsafe
             {
                 uint* ptr = (uint*)Bitmap.GetPixels().ToPointer();
-                for (int i = 0; i < Bitmap.Width * Bitmap.Height; i++)
-                    *ptr++ &= 0xE0E0E0FF;
+                Fern.Focus.AnalyzeTiles(ptr, Bitmap.Width, Bitmap.Height, 3, 5);
             }
             canvas.DrawBitmap(Bitmap, e.Info.Rect);
         }
