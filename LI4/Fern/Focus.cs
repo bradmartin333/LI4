@@ -1,14 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Fern
 {
     public static class Focus
     {
-        private const int TileSize = 5; // N x N pixel tiles
+        private const int TileSize = 4; // N x N pixel tiles
 
         public static unsafe void AnalyzeTiles(uint* ptr, int wid, int hgt, double fl, double fh)
         {
+            int tileIdx = 0;
+            Dictionary<int, double> entropyDict = new Dictionary<int, double>();
+
             for (int row = 0; row < hgt; row += TileSize)
                 for (int col = 0; col < wid; col += TileSize)
                 {
@@ -20,15 +24,27 @@ namespace Fern
                             vals.Add(*tilePtr);
                         }
 
-                    byte score = Map(Entropy(vals), fl, fh);
+                    entropyDict.Add(tileIdx, Entropy(vals));
+                    tileIdx++;
+                }
+
+            tileIdx = 0;
+            double[] entropyVals = entropyDict.Select(x => x.Value).ToArray();
+            double maxEntropy = entropyVals.Max();
+            double minEntropy = entropyVals.Min();
+
+            for (int row = 0; row < hgt; row += TileSize)
+                for (int col = 0; col < wid; col += TileSize)
+                {
                     for (int tileRow = 0; tileRow < TileSize; tileRow++)
-                    {
                         for (int tileCol = 0; tileCol < TileSize; tileCol++)
                         {
+                            byte score = Map(entropyDict[tileIdx], minEntropy, maxEntropy);
                             uint* thisPtr = ptr + (wid * (row + tileRow)) + col + tileCol;
                             *thisPtr = (uint)((255 << 24) | (score << 16) | (score << 8) | score);
                         }
-                    }
+
+                    tileIdx++;
                 }
         }
 

@@ -13,7 +13,6 @@ namespace Host
     /// </summary>
     public partial class MainWindow : Window
     {
-        private const double Scaling = 0.2; ///
         private SKBitmap Bitmap;
         private bool Rendering = true;
 
