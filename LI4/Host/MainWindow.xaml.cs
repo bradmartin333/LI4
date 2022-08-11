@@ -23,8 +23,8 @@ namespace Host
 
         private string GetRandomDevImage()
         {
-            DirectoryInfo directoryInfo = new DirectoryInfo($@"{Environment.GetFolderPath(Environment.SpecialFolder.MyPictures)}/Dev2/");
-            FileInfo[] files = directoryInfo.GetFiles().Where(x => new string[] { ".png", ".jpg" }.Contains(x.Extension)).ToArray();
+            DirectoryInfo directoryInfo = new DirectoryInfo($@"{Environment.GetFolderPath(Environment.SpecialFolder.Desktop)}");
+            FileInfo[] files = directoryInfo.GetFiles().Where(x => new string[] { ".png", ".jpg" }.Contains(x.Extension.ToLower())).ToArray();
             Random random = new Random();
             FileInfo file = files[random.Next(files.Length)];
             return file.FullName;
@@ -53,15 +53,6 @@ namespace Host
                 Fern.Focus.AnalyzeTiles(ptr, Bitmap.Width, Bitmap.Height, 3, 5);
             }
             canvas.DrawBitmap(Bitmap, e.Info.Rect);
-        }
-
-        private void SKprocessed_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
-        {
-            Point controlSpacePosition = e.GetPosition(SKprocessed);
-            int x = (int)Math.Floor(controlSpacePosition.X * Bitmap.Width / SKprocessed.ActualWidth);
-            int y = (int)Math.Floor(controlSpacePosition.Y * Bitmap.Height / SKprocessed.ActualHeight);
-            SKColor c = Bitmap.GetPixel(x, y);
-            Grid.Background = new SolidColorBrush(Color.FromArgb(c.Alpha, c.Red, c.Green, c.Blue));
         }
     }
 }
