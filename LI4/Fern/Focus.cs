@@ -20,7 +20,10 @@ namespace Fern
                     for (int tileRow = 0; tileRow < TileSize; tileRow++)
                         for (int tileCol = 0; tileCol < TileSize; tileCol++)
                         {
-                            uint* tilePtr = ptr + (wid * (row + tileRow)) + col + tileCol;
+
+                            int idx = (wid * (row + tileRow)) + col + tileCol;
+                            if (row + tileRow >= hgt || col + tileCol >= wid || idx >= wid * hgt) continue;
+                            uint* tilePtr = ptr + idx;
                             vals.Add(*tilePtr);
                         }
 
@@ -40,7 +43,9 @@ namespace Fern
                         for (int tileCol = 0; tileCol < TileSize; tileCol++)
                         {
                             byte score = Map(entropyDict[tileIdx], minEntropy, maxEntropy);
-                            uint* thisPtr = ptr + (wid * (row + tileRow)) + col + tileCol;
+                            int idx = (wid * (row + tileRow)) + col + tileCol;
+                            if (row + tileRow >= hgt || col + tileCol >= wid || idx >= wid * hgt) continue;
+                            uint* thisPtr = ptr + idx;
                             *thisPtr = (uint)((255 << 24) | (score << 16) | (score << 8) | score);
                         }
 
