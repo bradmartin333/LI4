@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 
 namespace Fern
 {
@@ -20,10 +21,7 @@ namespace Fern
                     for (int tileRow = 0; tileRow < TileSize; tileRow++)
                         for (int tileCol = 0; tileCol < TileSize; tileCol++)
                         {
-
-                            int idx = (wid * (row + tileRow)) + col + tileCol;
-                            if (row + tileRow >= hgt || col + tileCol >= wid || idx >= wid * hgt) continue;
-                            uint* tilePtr = ptr + idx;
+                            if (!ValidImgIndex(row, col, tileRow, tileCol, wid, hgt, ptr, out uint* tilePtr)) continue;
                             vals.Add(*tilePtr);
                         }
 
@@ -43,14 +41,20 @@ namespace Fern
                         for (int tileCol = 0; tileCol < TileSize; tileCol++)
                         {
                             byte score = Map(entropyDict[tileIdx], minEntropy, maxEntropy);
-                            int idx = (wid * (row + tileRow)) + col + tileCol;
-                            if (row + tileRow >= hgt || col + tileCol >= wid || idx >= wid * hgt) continue;
-                            uint* thisPtr = ptr + idx;
+                            if (!ValidImgIndex(row, col, tileRow, tileCol, wid, hgt, ptr, out uint* thisPtr)) continue;
                             *thisPtr = (uint)((255 << 24) | (score << 16) | (score << 8) | score);
                         }
 
                     tileIdx++;
                 }
+        }
+
+        private static unsafe bool ValidImgIndex (int i, int j, int k, int l, int w, int h, uint* ptr, out uint* validPtr)
+        {
+            int idx = (w * (i + k)) + j + l;
+            bool valid = !(i + k >= h|| j + l >= w || idx >= w * h);
+            validPtr = valid ? ptr + idx : null;
+            return valid;
         }
 
         private static byte Map(double v, double fL, double fH, double tL = 0, double tH = 255) => (byte)(((v - fL) * (tH - tL) / (fH - fL)) + tL);
